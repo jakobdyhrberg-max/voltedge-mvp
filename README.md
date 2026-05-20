@@ -12,6 +12,8 @@ Voltedge MVP is a FastAPI-based backend system for EV charger telemetry monitori
 - Dockerized setup
 - Automated tests with Pytest
 - CI pipeline with GitHub Actions
+- API security with API key authentication
+- Power BI integration for analytics dashboards
 
 ---
 
@@ -24,6 +26,7 @@ Voltedge MVP is a FastAPI-based backend system for EV charger telemetry monitori
 - Docker
 - Pytest
 - GitHub Actions
+- Power BI
 
 ---
 
@@ -85,6 +88,50 @@ GitHub Actions automatically runs tests on every push to the `main` branch.
 
 ---
 
+# DevSecOps & Security
+
+## Continuous Integration
+
+The project uses GitHub Actions for automated CI pipelines.
+Tests are automatically executed on every push to the `main` branch to ensure application stability and code quality.
+
+## Dockerized Infrastructure
+
+The backend API and database run inside Docker containers using Docker Compose.
+
+This ensures consistent environments across development and testing.
+
+## API Security
+
+Protected endpoints require an API key using the `x-api-key` request header.
+
+Example:
+
+```text
+x-api-key: dev-secret-key
+```
+
+API secrets are configured through environment variables instead of hardcoded credentials.
+
+## Logging & Monitoring
+
+The system uses structured logging to monitor:
+
+- telemetry ingestion
+- incident detection
+- alert generation
+- unauthorized API access attempts
+
+This supports operational monitoring and troubleshooting.
+
+## Business Intelligence Integration
+
+Power BI connects directly to FastAPI analytics endpoints through authenticated REST API requests.
+
+This enables near real-time dashboard refreshes without manually exporting CSV files.
+
+---
+
 # Example API Endpoints
 
 ## Submit telemetry
@@ -109,6 +156,18 @@ GET /incidents
 
 ```http
 GET /alerts
+```
+
+## Analytics summary
+
+```http
+GET /analytics/summary
+```
+
+## Severity analytics
+
+```http
+GET /analytics/severity-count
 ```
 
 ---
