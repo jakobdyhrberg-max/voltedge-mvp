@@ -4,13 +4,20 @@ import os
 
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://root:password@db:3306/voltedge"
+    "sqlite:///./test.db"
 )
 
-engine = create_engine(DATABASE_URL)
+connect_args = {}
+
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {"check_same_thread": False}
+
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
+
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 Base = declarative_base()
+
 
 def get_db():
     db = SessionLocal()

@@ -17,12 +17,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build and start containers
-        run: docker compose up -d --build
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-      - name: Run tests inside API container
-        run: docker compose exec -T api pytest tests
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Stop containers
-        if: always()
-        run: docker compose down
+      - name: Run tests
+        env:
+          PYTHONPATH: .
+          DATABASE_URL: sqlite:///./test.db
+        run: |
+          pytest tests
