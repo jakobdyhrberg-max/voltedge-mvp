@@ -3,6 +3,10 @@ from app.main import app
 
 client = TestClient(app)
 
+HEADERS = {
+    "x-api-key": "dev-secret-key"
+}
+
 
 def test_health_check():
     response = client.get("/health")
@@ -23,7 +27,11 @@ def test_create_telemetry():
         "error_code": "E500"
     }
 
-    response = client.post("/telemetry", json=telemetry_data)
+    response = client.post(
+        "/telemetry",
+        json=telemetry_data,
+        headers=HEADERS
+    )
 
     assert response.status_code == 200
 
@@ -34,21 +42,30 @@ def test_create_telemetry():
 
 
 def test_get_chargers():
-    response = client.get("/chargers")
+    response = client.get("/chargers", headers=HEADERS)
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_incidents():
-    response = client.get("/incidents")
+    response = client.get("/incidents", headers=HEADERS)
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
 
 
 def test_get_alerts():
-    response = client.get("/alerts")
+    response = client.get("/alerts", headers=HEADERS)
 
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+
+def test_protected_endpoint_without_api_key():
+    response = client.get("/chargers")
+
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Invalid or missing API key"
+    }
