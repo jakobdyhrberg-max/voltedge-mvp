@@ -1,36 +1,46 @@
-# Voltedge MVP
+# VoltEdge Charger Monitoring MVP
 
-Voltedge MVP is a FastAPI-based backend system for EV charger telemetry monitoring and incident detection.
+A cloud-native EV charger monitoring MVP built with FastAPI, MySQL, Docker, and Power BI.
 
-## Features
-
-- Receive telemetry data from EV chargers
-- Detect incidents automatically
-- Generate alerts based on severity
-- Store data in MySQL
-- REST API with Swagger documentation
-- Dockerized setup
-- Automated tests with Pytest
-- CI pipeline with GitHub Actions
-- API security with API key authentication
-- Power BI integration for analytics dashboards
+The system receives telemetry data from EV chargers, stores operational data in a MySQL database, generates incidents and alerts based on charger conditions, and visualizes operational analytics in Power BI dashboards.
 
 ---
 
-# Tech Stack
+## Architecture
 
-- Python 3.11
-- FastAPI
-- SQLAlchemy
-- MySQL
-- Docker
-- Pytest
-- GitHub Actions
-- Power BI
+```text
+Telemetry/API Requests
+        ↓
+FastAPI Microservice
+        ↓
+MySQL Operational Database
+        ↓
+Power BI Dashboard
+```
+
+The solution follows a layered architecture where:
+
+- FastAPI handles telemetry ingestion and business logic
+- MySQL stores operational telemetry, incidents, and alerts
+- Docker containerizes the application and database
+- Power BI provides analytics and operational monitoring dashboards
 
 ---
 
-# Project Structure
+## Tech Stack
+
+| Component | Technology |
+|---|---|
+| API Framework | FastAPI |
+| Database | MySQL |
+| ORM | SQLAlchemy |
+| Containerization | Docker |
+| Analytics | Power BI |
+| Language | Python |
+
+---
+
+## Project Structure
 
 ```text
 voltedge-mvp/
@@ -43,10 +53,6 @@ voltedge-mvp/
 │   └── services.py
 │
 ├── tests/
-│   └── test_main.py
-│
-├── .github/workflows/
-│   └── ci.yml
 │
 ├── Dockerfile
 ├── docker-compose.yml
@@ -56,15 +62,25 @@ voltedge-mvp/
 
 ---
 
-# Running Locally
+## Running the Project
 
-## Start application
+### Start containers
 
 ```bash
 docker compose up --build
 ```
 
-API documentation:
+### Stop containers
+
+```bash
+docker compose down
+```
+
+The solution runs in Docker containers:
+- FastAPI API container
+- MySQL database container
+
+Swagger documentation is available at:
 
 ```text
 http://localhost:8000/docs
@@ -72,106 +88,85 @@ http://localhost:8000/docs
 
 ---
 
-# Running Tests
+## Database Configuration
 
-## Local tests
+The MVP uses MySQL for persistent operational storage.
 
-```bash
-docker compose exec api pytest tests
+Connection string:
+
+```env
+DATABASE_URL=mysql+pymysql://voltedge_user:voltedge_pass@db:3306/voltedge
 ```
 
+The following tables are automatically created:
+- telemetry_readings
+- chargers
+- incidents
+- alerts
+
+The database persists data using Docker volumes.
+
 ---
 
-# CI/CD
+## Example Telemetry Request
 
-GitHub Actions automatically runs tests on every push to the `main` branch.
-
----
-
-# DevSecOps & Security
-
-## Continuous Integration
-
-The project uses GitHub Actions for automated CI pipelines.
-Tests are automatically executed on every push to the `main` branch to ensure application stability and code quality.
-
-## Dockerized Infrastructure
-
-The backend API and database run inside Docker containers using Docker Compose.
-
-This ensures consistent environments across development and testing.
-
-## API Security
-
-Protected endpoints require an API key using the `x-api-key` request header.
-
-Example:
+Example request sent to:
 
 ```text
-x-api-key: dev-secret-key
-```
-
-API secrets are configured through environment variables instead of hardcoded credentials.
-
-## Logging & Monitoring
-
-The system uses structured logging to monitor:
-
-- telemetry ingestion
-- incident detection
-- alert generation
-- unauthorized API access attempts
-
-This supports operational monitoring and troubleshooting.
-
-## Business Intelligence Integration
-
-Power BI connects directly to FastAPI analytics endpoints through authenticated REST API requests.
-
-This enables near real-time dashboard refreshes without manually exporting CSV files.
-
----
-
-# Example API Endpoints
-
-## Submit telemetry
-
-```http
 POST /telemetry
 ```
 
-## Get chargers
-
-```http
-GET /chargers
-```
-
-## Get incidents
-
-```http
-GET /incidents
-```
-
-## Get alerts
-
-```http
-GET /alerts
-```
-
-## Analytics summary
-
-```http
-GET /analytics/summary
-```
-
-## Severity analytics
-
-```http
-GET /analytics/severity-count
+```json
+{
+  "charger_id": "CH-001",
+  "location": "Copenhagen",
+  "voltage": 230,
+  "current": 16,
+  "power": 3.7,
+  "temperature": 45,
+  "status": "AVAILABLE",
+  "error_code": null
+}
 ```
 
 ---
 
-# Author
+## Power BI Integration
 
-Jakob Dyhrberg Adamsen
+Power BI connects directly to the MySQL database.
+
+### Connection Settings
+
+```text
+Server: localhost:3307
+Database: voltedge
+Username: voltedge_user
+Password: voltedge_pass
+```
+
+The Power BI dashboard visualizes:
+- Charger status distribution
+- Telemetry trends
+- Temperature monitoring
+- Incident severity
+- Operational KPIs
+- Charger availability
+
+---
+
+## Features
+
+- Telemetry ingestion API
+- Persistent MySQL storage
+- Incident generation
+- Alert management
+- Operational monitoring dashboards
+- Dockerized deployment
+- Power BI analytics integration
+
+---
+
+
+## Authors
+
+VoltEdge MVP Project Team
