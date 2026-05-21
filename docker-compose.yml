@@ -1,11 +1,16 @@
 services:
   db:
     image: mysql:8.0
+    container_name: voltedge_mysql
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: voltedge
+      MYSQL_USER: voltedge_user
+      MYSQL_PASSWORD: voltedge_pass
     ports:
       - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-ppassword"]
       interval: 5s
@@ -14,11 +19,16 @@ services:
 
   api:
     build: .
+    container_name: voltedge_api
     restart: on-failure
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: mysql+pymysql://root:password@db:3306/voltedge
+      DATABASE_URL: mysql+pymysql://voltedge_user:voltedge_pass@db:3306/voltedge
+      API_KEY: dev-secret-key
     depends_on:
       db:
         condition: service_healthy
+
+volumes:
+  mysql_data:
