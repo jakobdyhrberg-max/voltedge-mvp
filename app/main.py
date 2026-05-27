@@ -97,7 +97,8 @@ def receive_telemetry(
             charger_id=data.charger_id,
             incident_type=item["type"],
             severity=item["severity"],
-            description=item["description"]
+            description=item["description"],
+            risk_score=item.get("risk_score"),
         )
 
         db.add(incident)

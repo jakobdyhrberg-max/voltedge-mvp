@@ -1,27 +1,29 @@
 # VoltEdge Charger Monitoring MVP
 
-A cloud-native EV charger monitoring MVP built with FastAPI, MySQL, Docker, and Power BI.
+A cloud-native EV charger monitoring MVP built with FastAPI, MySQL, Docker, Power BI, and a simple machine learning model for predictive maintenance analytics.
 
-The system receives telemetry data from EV chargers, stores operational data in a MySQL database, generates incidents and alerts based on charger conditions, and visualizes operational analytics in Power BI dashboards.
+The system receives telemetry data from EV chargers, stores operational data in a MySQL database, generates incidents and alerts based on charger conditions, performs predictive maintenance analysis, and visualizes operational analytics in Power BI dashboards.
 
 ---
 
 ## Architecture
 
-```text
 Telemetry/API Requests
         ↓
 FastAPI Microservice
         ↓
+TelemetryAnalysisService + PredictiveMaintenanceService
+        ↓
 MySQL Operational Database
         ↓
 Power BI Dashboard
-```
 
 The solution follows a layered architecture where:
 
-- FastAPI handles telemetry ingestion and business logic
-- MySQL stores operational telemetry, incidents, and alerts
+- FastAPI handles telemetry ingestion and API validation
+- TelemetryAnalysisService handles operational incident detection
+- PredictiveMaintenanceService performs rule-based predictive analytics and machine learning predictions
+- MySQL stores telemetry, incidents, alerts, and predictive risk scores
 - Docker containerizes the application and database
 - Power BI provides analytics and operational monitoring dashboards
 
@@ -35,14 +37,16 @@ The solution follows a layered architecture where:
 | Database | MySQL |
 | ORM | SQLAlchemy |
 | Containerization | Docker |
-| Analytics | Power BI |
+| Analytics & Visualization | Power BI |
+| Machine Learning | Scikit-learn |
+| Data Processing | Pandas |
+| Model Persistence | Joblib |
 | Language | Python |
 
 ---
 
 ## Project Structure
 
-```text
 voltedge-mvp/
 │
 ├── app/
@@ -50,7 +54,10 @@ voltedge-mvp/
 │   ├── database.py
 │   ├── models.py
 │   ├── schemas.py
-│   └── services.py
+│   ├── services.py
+│   │
+│   └── ml/
+│       ├── train_model.py
 │
 ├── tests/
 │
@@ -58,7 +65,6 @@ voltedge-mvp/
 ├── docker-compose.yml
 ├── requirements.txt
 └── README.md
-```
 
 ---
 
@@ -66,15 +72,11 @@ voltedge-mvp/
 
 ### Start containers
 
-```bash
 docker compose up --build
-```
 
 ### Stop containers
 
-```bash
 docker compose down
-```
 
 The solution runs in Docker containers:
 - FastAPI API container
@@ -82,9 +84,7 @@ The solution runs in Docker containers:
 
 Swagger documentation is available at:
 
-```text
 http://localhost:8000/docs
-```
 
 ---
 
@@ -94,9 +94,7 @@ The MVP uses MySQL for persistent operational storage.
 
 Connection string:
 
-```env
 DATABASE_URL=mysql+pymysql://voltedge_user:voltedge_pass@db:3306/voltedge
-```
 
 The following tables are automatically created:
 - telemetry_readings
@@ -104,7 +102,49 @@ The following tables are automatically created:
 - incidents
 - alerts
 
+The incidents table also supports:
+- predictive maintenance incidents
+- nullable risk_score values for predictive analytics
+
 The database persists data using Docker volumes.
+
+---
+
+## API Security
+
+The telemetry endpoint is protected with a simple API key mechanism as part of the MVP security setup.
+
+The API key is configured through the Docker environment:
+
+API_KEY=dev-secret-key
+
+Requests to protected endpoints must include the following header:
+
+x-api-key: dev-secret-key
+
+This demonstrates a basic DevSecOps principle by avoiding completely open ingestion endpoints. In a production setup, this should be replaced with stronger authentication and secret management such as OAuth2, Azure Key Vault, or managed secrets.
+
+---
+
+## Predictive Maintenance and Machine Learning
+
+The MVP includes a PredictiveMaintenanceService that combines rule-based risk scoring with a simple Logistic Regression machine learning model.
+
+The service evaluates telemetry data such as:
+- temperature
+- voltage
+- current
+- power consumption
+- charger status
+- error codes
+
+Based on the analysis, the system generates predictive maintenance incidents when a charger shows signs of elevated operational risk.
+
+The machine learning model is trained using Scikit-learn and stored with Joblib as:
+
+app/ml/maintenance_model.pkl
+
+Predictive maintenance incidents are stored in the database together with a calculated risk_score, which can later be visualized in Power BI dashboards.
 
 ---
 
@@ -112,11 +152,14 @@ The database persists data using Docker volumes.
 
 Example request sent to:
 
-```text
 POST /telemetry
-```
 
-```json
+Required header:
+
+x-api-key: dev-secret-key
+
+Example payload:
+
 {
   "charger_id": "CH-001",
   "location": "Copenhagen",
@@ -127,7 +170,6 @@ POST /telemetry
   "status": "AVAILABLE",
   "error_code": null
 }
-```
 
 ---
 
@@ -137,20 +179,24 @@ Power BI connects directly to the MySQL database.
 
 ### Connection Settings
 
-```text
 Server: localhost:3307
 Database: voltedge
 Username: voltedge_user
 Password: voltedge_pass
-```
 
 The Power BI dashboard visualizes:
+- Total telemetry readings
+- Total incidents detected
+- Faulted chargers
+- Critical incidents
+- Predictive maintenance alerts
+- Average risk score
 - Charger status distribution
-- Telemetry trends
+- Power consumption trends
 - Temperature monitoring
-- Incident severity
 - Operational KPIs
-- Charger availability
+
+The dashboard supports operational monitoring and provides visibility into charger health, incidents, and predictive maintenance risks.
 
 ---
 
@@ -160,12 +206,14 @@ The Power BI dashboard visualizes:
 - Persistent MySQL storage
 - Incident generation
 - Alert management
+- Rule-based predictive analytics
+- Simple machine learning model
+- Predictive maintenance risk scoring
 - Operational monitoring dashboards
 - Dockerized deployment
 - Power BI analytics integration
 
 ---
-
 
 ## Authors
 

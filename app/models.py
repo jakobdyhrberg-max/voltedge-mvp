@@ -33,6 +33,7 @@ class Incident(Base):
     severity = Column(String(50))
     description = Column(String(255))
     status = Column(String(50), default="OPEN")
+    risk_score = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 
