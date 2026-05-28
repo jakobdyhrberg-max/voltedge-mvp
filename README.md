@@ -142,7 +142,7 @@ Based on the analysis, the system generates predictive maintenance incidents whe
 
 The machine learning model is trained using Scikit-learn and stored with Joblib as:
 
-app/ml/maintenance_model.pkl
+app/ml/train_model.py
 
 Predictive maintenance incidents are stored in the database together with a calculated risk_score, which can later be visualized in Power BI dashboards.
 
