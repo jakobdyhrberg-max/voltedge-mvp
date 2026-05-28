@@ -1,220 +1,677 @@
 # VoltEdge Charger Monitoring MVP
 
-A cloud-native EV charger monitoring MVP built with FastAPI, MySQL, Docker, Power BI, and a simple machine learning model for predictive maintenance analytics.
+## Design og implementering af digitale løsninger – 6. Semester Eksamen
 
-The system receives telemetry data from EV chargers, stores operational data in a MySQL database, generates incidents and alerts based on charger conditions, performs predictive maintenance analysis, and visualizes operational analytics in Power BI dashboards.
-
----
-
-## Architecture
-
-Telemetry/API Requests
-        ↓
-FastAPI Microservice
-        ↓
-TelemetryAnalysisService + PredictiveMaintenanceService
-        ↓
-MySQL Operational Database
-        ↓
-Power BI Dashboard
-
-The solution follows a layered architecture where:
-
-- FastAPI handles telemetry ingestion and API validation
-- TelemetryAnalysisService handles operational incident detection
-- PredictiveMaintenanceService performs rule-based predictive analytics and machine learning predictions
-- MySQL stores telemetry, incidents, alerts, and predictive risk scores
-- Docker containerizes the application and database
-- Power BI provides analytics and operational monitoring dashboards
+**Erhvervsakademi København**
+Gruppe 19
+Jakob Dyhrberg Adamsen & Tobias Nüchel Kristensen
 
 ---
 
-## Tech Stack
+# 1. Projektbeskrivelse
 
-| Component | Technology |
-|---|---|
-| API Framework | FastAPI |
-| Database | MySQL |
-| ORM | SQLAlchemy |
-| Containerization | Docker |
-| Analytics & Visualization | Power BI |
-| Machine Learning | Scikit-learn |
-| Data Processing | Pandas |
-| Model Persistence | Joblib |
-| Language | Python |
+VoltEdge Charger Monitoring MVP er en cloud-native overvågningsplatform udviklet som en del af 6. semester eksamensprojektet i Design og implementering af digitale løsninger.
+
+Projektet tager udgangspunkt i casen:
+
+> VoltEdge Mobility A/S – Smart EV Charging Infrastructure
+
+MVP’et adresserer virksomhedens mest kritiske operationelle udfordringer:
+
+* Manglende observability
+* Manuel incident-håndtering
+* Ustabil telemetri
+* Mangelfuld alarmering
+* Begrænset realtime indsigt i ladestanderes tilstand
+
+Løsningen overvåger EV-ladestandere i realtime ved hjælp af telemetridata og genererer automatisk alerts og incidents ved fejl, afvigelser eller risikoadfærd.
 
 ---
 
-## Project Structure
+# 2. Strategisk kobling
 
+Projektet er udviklet med direkte udgangspunkt i VoltEdges strategiske mål.
+
+| Strategisk mål                 | Hvordan MVP’et understøtter målet                                       |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| Scale Operations               | Automatiseret overvågning reducerer manuel drift                        |
+| Data-driven Services           | Telemetridata analyseres aktivt og bruges til predictive maintenance    |
+| Secure & Reliable Platform     | Logging, incidents og alerts skaber observability og sporbarhed         |
+| Partner API Ecosystem          | API-first arkitektur muliggør fremtidige integrationer                  |
+| Automated Billing & Settlement | Etablerer stabilt operationelt fundament for fremtidig settlement-logik |
+
+MVP’et fokuserer bevidst på ét centralt bounded context:
+
+> Charger Monitoring Context
+
+Dette valg reducerer kompleksitet og gør det muligt at demonstrere en realistisk og velafgrænset implementering af Domain Driven Design.
+
+---
+
+# 3. Arkitektur
+
+Løsningen er udviklet som en lagdelt cloud-native arkitektur med inspiration fra:
+
+* Domain Driven Design (DDD)
+* Clean Architecture
+* DevSecOps
+* Cloud-native design principles
+
+## Arkitekturlag
+
+```text
+Swagger UI / Client
+        ↓
+FastAPI REST API Layer
+        ↓
+Application Layer
+        ↓
+Domain Layer
+        ↓
+Infrastructure Layer
+        ↓
+MySQL Database
+        ↓
+Power BI Analytics
+```
+
+---
+
+# 4. Domain Driven Design
+
+Projektet er designet omkring ét bounded context:
+
+## Charger Monitoring Context
+
+Contextet har ansvar for:
+
+* Charger monitoring
+* Telemetry ingestion
+* Incident detection
+* Alert generation
+* Predictive maintenance
+
+## Centrale domæneobjekter
+
+| Rapportbegreb    | Kode               | Database             |
+| ---------------- | ------------------ | -------------------- |
+| Charger          | `Charger`          | `chargers`           |
+| TelemetryReading | `TelemetryReading` | `telemetry_readings` |
+| Incident         | `Incident`         | `incidents`          |
+| Alert            | `Alert`            | `alerts`             |
+
+## Domain Services
+
+### TelemetryAnalysisService
+
+Ansvar:
+
+* Analyse af telemetrydata
+* Severity classification
+* Incident generation
+* Alert creation
+
+### PredictiveMaintenanceService
+
+Ansvar:
+
+* Risk scoring
+* Predictive maintenance analyse
+* ML prediction
+* Generering af predictive incidents
+
+## Aggregate Root
+
+`Incident` fungerer som aggregate root.
+
+Dette sikrer:
+
+* Konsistens mellem incidents og alerts
+* Tydelig transaction boundary
+* Samlet håndtering af driftshændelser
+
+## Domain Events
+
+Systemet arbejder konceptuelt med følgende domain events:
+
+* `TelemetryReceived`
+* `AnomalyDetected`
+* `IncidentCreated`
+* `AlertCreated`
+
+I MVP’et håndteres disse events primært internt i applikationsflowet.
+
+---
+
+# 5. Tech Stack
+
+| Teknologi       | Formål                 |
+| --------------- | ---------------------- |
+| Python          | Backend udvikling      |
+| FastAPI         | REST API               |
+| SQLAlchemy      | ORM                    |
+| MySQL           | Operationel database   |
+| Docker          | Containerisering       |
+| Docker Compose  | Lokal orchestration    |
+| Power BI        | Analytics & dashboards |
+| GitHub Actions  | CI/CD                  |
+| Pytest          | Testing                |
+| Swagger/OpenAPI | API dokumentation      |
+
+---
+
+# 6. Funktionalitet
+
+## Implementeret funktionalitet
+
+### Charger Monitoring
+
+* Overvågning af ladestandere
+* Realtime telemetry ingestion
+* Status tracking
+* Temperature monitoring
+* Voltage/current/power monitoring
+
+### Incident Detection
+
+* Automatisk fejlidentifikation
+* Severity classification
+* Incident generation
+* Predictive maintenance alerts
+
+### Operational Alerting
+
+* Alert generation
+* Severity levels
+* Incident linking
+* Timestamp tracking
+
+### Analytics
+
+* Power BI dashboards
+* Incident statistics
+* Charger uptime analysis
+* Temperature monitoring
+* Predictive maintenance insights
+
+---
+
+# 7. API Endpoints
+
+## Base URL
+
+```text
+http://localhost:8000
+```
+
+## Swagger Documentation
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Telemetry
+
+### POST /telemetry
+
+Indsender telemetrydata fra en charger.
+
+### Example Request
+
+```json
+{
+  "charger_id": 1,
+  "voltage": 400,
+  "current": 32,
+  "power": 22,
+  "temperature": 95,
+  "status": "FAULTED",
+  "error_code": "OVERHEAT"
+}
+```
+
+---
+
+## Chargers
+
+### GET /chargers
+
+Returnerer alle chargers.
+
+### GET /chargers/{id}
+
+Returnerer specifik charger.
+
+---
+
+## Incidents
+
+### GET /incidents
+
+Returnerer alle incidents.
+
+### GET /incidents/{id}
+
+Returnerer specifikt incident.
+
+---
+
+## Alerts
+
+### GET /alerts
+
+Returnerer alle alerts.
+
+### GET /alerts/{id}
+
+Returnerer specifik alert.
+
+---
+
+## Analytics
+
+### GET /analytics
+
+Returnerer analytics data.
+
+---
+
+# 8. Database
+
+Systemet anvender MySQL som operationel database.
+
+## Centrale tabeller
+
+| Tabel              | Formål               |
+| ------------------ | -------------------- |
+| chargers           | Ladestandere         |
+| telemetry_readings | Telemetry data       |
+| incidents          | Driftshændelser      |
+| alerts             | Operationelle alerts |
+
+## Datamodel
+
+Telemetrydata lagres og analyseres operationelt.
+
+Data bruges efterfølgende i:
+
+* Predictive maintenance
+* Incident detection
+* Analytics
+* Power BI dashboards
+
+---
+
+# 9. Power BI Analytics
+
+Projektet inkluderer Power BI dashboards til visualisering af operationelle data.
+
+## Dashboard metrics
+
+* Total incidents
+* Charger uptime
+* Severity distribution
+* Temperature trends
+* Predictive maintenance alerts
+* Average risk score
+
+## Formål
+
+Power BI anvendes til:
+
+* Driftsoverblik
+* KPI-monitorering
+* Historisk analyse
+* Predictive insights
+* Beslutningsstøtte
+
+---
+
+# 10. Docker Setup
+
+Projektet køres via Docker Compose.
+
+## Start systemet
+
+```bash
+docker compose up --build
+```
+
+## Stop systemet
+
+```bash
+docker compose down
+```
+
+## Services
+
+| Service | Port |
+| ------- | ---- |
+| FastAPI | 8000 |
+| MySQL   | 3306 |
+
+---
+
+# 11. Lokal installation
+
+## Clone repository
+
+```bash
+git clone https://github.com/jakobdyhrberg-max/voltedge-mvp.git
+```
+
+## Gå ind i projektet
+
+```bash
+cd voltedge-mvp
+```
+
+## Start løsningen
+
+```bash
+docker compose up --build
+```
+
+---
+
+# 12. Testing
+
+Projektet anvender Pytest til automatiseret testing.
+
+## Kør tests
+
+```bash
+pytest
+```
+
+## Testtyper
+
+* Unit tests
+* API tests
+* Service tests
+* Validation tests
+
+Testing anvendes som en del af CI/CD pipeline.
+
+---
+
+# 13. CI/CD
+
+Projektet anvender GitHub Actions som CI/CD platform.
+
+## Pipeline indeholder
+
+* Dependency installation
+* Automated testing
+* Build validation
+* Docker workflow
+
+## Formål
+
+CI/CD understøtter:
+
+* Hurtigere feedback
+* Stabilitet
+* Kvalitetssikring
+* Reduceret fejlrisiko
+* Reproducerbare builds
+
+---
+
+# 14. Security
+
+MVP’et anvender en simpel API-key mekanisme til autentifikation.
+
+## Security features
+
+* API key validation
+* Environment variables
+* Container isolation
+* Input validation via Pydantic
+
+## MVP-afgrænsning
+
+I en produktionsløsning ville følgende blive implementeret:
+
+* OAuth2 / OpenID Connect
+* Azure Key Vault / Secrets Manager
+* Centralized identity management
+* Rate limiting
+* SIEM integration
+* Distributed tracing
+
+---
+
+# 15. Observability & Drift
+
+Projektet adresserer observability som et centralt strategisk problem.
+
+## Driftshensyn
+
+* Structured logging
+* Incident generation
+* Alerting
+* Error handling
+* Containerized deployment
+
+## Fremtidige forbedringer
+
+* Prometheus metrics
+* Grafana dashboards
+* Distributed tracing
+* Centralized logging
+* Kubernetes deployment
+* Autoscaling
+
+---
+
+# 16. Predictive Maintenance
+
+Løsningen inkluderer en simpel predictive maintenance model.
+
+## Model
+
+MVP’et anvender:
+
+* Rule-based risk scoring
+* Simpel Logistic Regression prediction
+
+## Analyseparametre
+
+* Temperatur
+* Voltage
+* Current
+* Power
+* Error codes
+
+## Formål
+
+Predictive maintenance anvendes til:
+
+* Tidlig fejlidentifikation
+* Reduceret downtime
+* Forbedret oppetid
+* Datadrevne operationer
+
+---
+
+# 17. Demo Flow
+
+Følgende flow kan anvendes til demo.
+
+## Step 1 – Start systemet
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Step 2 – Åbn Swagger UI
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Step 3 – Send normal telemetry
+
+Indsend telemetry med normal temperatur og status.
+
+Resultat:
+
+* Telemetry gemmes
+* Ingen incidents genereres
+
+---
+
+## Step 4 – Send fault telemetry
+
+Indsend telemetry med:
+
+* Høj temperatur
+* Faulted status
+* Error code
+
+Resultat:
+
+* Incident oprettes
+* Alert genereres
+* Severity klassificeres
+* Risk score beregnes
+
+---
+
+## Step 5 – Se incidents og alerts
+
+Brug:
+
+```text
+GET /incidents
+GET /alerts
+```
+
+---
+
+## Step 6 – Åbn Power BI dashboard
+
+Visualiser:
+
+* Incidents
+* Alerts
+* Charger health
+* Predictive maintenance trends
+
+---
+
+# 18. MVP Scope og afgrænsning
+
+Projektet er bevidst afgrænset til ét bounded context.
+
+Følgende områder er uden for MVP scope:
+
+* Billing & settlement
+* Roaming agreements
+* Fleet management
+* Smart charging orchestration
+* Multi-region deployment
+* Full event-driven microservices
+
+Dette valg er truffet for at sikre:
+
+* Tydeligt domænefokus
+* Konsistent ubiquitous language
+* Realistisk implementering
+* Lavere arkitektonisk kompleksitet
+
+---
+
+# 19. Fremtidig videreudvikling
+
+Mulige næste skridt:
+
+* Event-driven architecture
+* Kafka / RabbitMQ
+* Kubernetes deployment
+* Multi-tenant architecture
+* Real ML model training
+* Streaming analytics
+* Advanced observability
+* Azure cloud deployment
+* OCPP integration
+* Load forecasting
+
+---
+
+# 20. Repository Struktur
+
+```text
 voltedge-mvp/
 │
 ├── app/
-│   ├── main.py
-│   ├── database.py
-│   ├── models.py
-│   ├── schemas.py
-│   ├── services.py
-│   │
-│   └── ml/
-│       ├── train_model.py
-│
 ├── tests/
-│
-├── Dockerfile
+├── .github/workflows/
 ├── docker-compose.yml
+├── Dockerfile
 ├── requirements.txt
 └── README.md
+```
 
 ---
 
-## Running the Project
+# 21. Formål med projektet
 
-### Start containers
+Projektets formål er at demonstrere:
 
-docker compose up --build
+* Strategisk alignment
+* Domain Driven Design
+* Cloud-native arkitektur
+* Data-driven services
+* DevSecOps principper
+* Operationel observability
+* Analytics og visualisering
 
-### Stop containers
-
-docker compose down
-
-The solution runs in Docker containers:
-- FastAPI API container
-- MySQL database container
-
-Swagger documentation is available at:
-
-http://localhost:8000/docs
+Projektet er udviklet som en realistisk MVP der kobler strategi, arkitektur, data og drift i én samlet digital løsning.
 
 ---
 
-## Database Configuration
+# 22. Links
 
-The MVP uses MySQL for persistent operational storage.
+## GitHub Repository
 
-Connection string:
-
-DATABASE_URL=mysql+pymysql://voltedge_user:voltedge_pass@db:3306/voltedge
-
-The following tables are automatically created:
-- telemetry_readings
-- chargers
-- incidents
-- alerts
-
-The incidents table also supports:
-- predictive maintenance incidents
-- nullable risk_score values for predictive analytics
-
-The database persists data using Docker volumes.
+```text
+https://github.com/jakobdyhrberg-max/voltedge-mvp
+```
 
 ---
 
-## API Security
+# 23. Bilag og dokumentation
 
-The telemetry endpoint is protected with a simple API key mechanism as part of the MVP security setup.
+Projektet understøttes af:
 
-The API key is configured through the Docker environment:
-
-API_KEY=dev-secret-key
-
-Requests to protected endpoints must include the following header:
-
-x-api-key: dev-secret-key
-
-This demonstrates a basic DevSecOps principle by avoiding completely open ingestion endpoints. In a production setup, this should be replaced with stronger authentication and secret management such as OAuth2, Azure Key Vault, or managed secrets.
-
----
-
-## Predictive Maintenance and Machine Learning
-
-The MVP includes a PredictiveMaintenanceService that combines rule-based risk scoring with a simple Logistic Regression machine learning model.
-
-The service evaluates telemetry data such as:
-- temperature
-- voltage
-- current
-- power consumption
-- charger status
-- error codes
-
-Based on the analysis, the system generates predictive maintenance incidents when a charger shows signs of elevated operational risk.
-
-The machine learning model is trained using Scikit-learn and stored with Joblib as:
-
-app/ml/train_model.py
-
-Predictive maintenance incidents are stored in the database together with a calculated risk_score, which can later be visualized in Power BI dashboards.
+* Eksamenrapport
+* Arkitekturdiagrammer
+* Domain model
+* Capability map
+* Power BI dashboards
+* CI/CD workflows
+* Docker setup
+* Test suite
 
 ---
 
-## Example Telemetry Request
+# 24. Konklusion
 
-Example request sent to:
+VoltEdge Charger Monitoring MVP demonstrerer hvordan Domain Driven Design, dataanalyse og cloud-native principper kan anvendes til at udvikle en skalerbar og driftssikker overvågningsplatform til EV-ladeinfrastruktur.
 
-POST /telemetry
+Projektet etablerer et operationelt fundament for:
 
-Required header:
+* Realtime observability
+* Incident management
+* Predictive maintenance
+* Data-driven services
 
-x-api-key: dev-secret-key
-
-Example payload:
-
-{
-  "charger_id": "CH-001",
-  "location": "Copenhagen",
-  "voltage": 230,
-  "current": 16,
-  "power": 3.7,
-  "temperature": 45,
-  "status": "AVAILABLE",
-  "error_code": null
-}
-
----
-
-## Power BI Integration
-
-Power BI connects directly to the MySQL database.
-
-### Connection Settings
-
-Server: localhost:3307
-Database: voltedge
-Username: voltedge_user
-Password: voltedge_pass
-
-The Power BI dashboard visualizes:
-- Total telemetry readings
-- Total incidents detected
-- Faulted chargers
-- Critical incidents
-- Predictive maintenance alerts
-- Average risk score
-- Charger status distribution
-- Power consumption trends
-- Temperature monitoring
-- Operational KPIs
-
-The dashboard supports operational monitoring and provides visibility into charger health, incidents, and predictive maintenance risks.
-
----
-
-## Features
-
-- Telemetry ingestion API
-- Persistent MySQL storage
-- Incident generation
-- Alert management
-- Rule-based predictive analytics
-- Simple machine learning model
-- Predictive maintenance risk scoring
-- Operational monitoring dashboards
-- Dockerized deployment
-- Power BI analytics integration
-
----
-
-## Authors
-
-VoltEdge MVP Project Team
+og understøtter dermed VoltEdges strategiske ambition om at udvikle sig fra platform-operatør til platform-first partner i mobilitetsøkosystemet.
